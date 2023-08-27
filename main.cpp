@@ -1,5 +1,5 @@
 #include "battlefield.h"
-#include "winconsole.h"
+#include "control.h"
 #include <iostream>
 
 
@@ -9,33 +9,16 @@ int main(int argc, char const *argv[])
     
     std::cout << "hello" << std::endl;
 
-    Coordinates size = {18, 8};
-    ConsoleFrame console;
-    Tetris tetris(size);
-    BattleField field(size);
+    Coordinates size = {18, 12};
+    // Tetris tetris(size);
+    // BattleField field(size);
+    std::shared_ptr<Tetris> tet ( new Tetris(size));
+    std::shared_ptr<BattleField> fld ( new BattleField(size));
 
-    tetris.Start();
-    tetris.NewTetramino();
-
-    //(TetraminoType i = TetraminoType::I; i <= TetraminoType::T; i = static_cast<TetraminoType>((int)i + 1))
-    while (tetris.GameIsStart())
-    {
-    draw(field, tetris);
-    //std::cout << field << std::endl;
-     console.Print(field);
-
-    tetris.Move(MoveType::Left);
-    draw(field, tetris);
-     console.Print(field);
-
-    tetris.Move(MoveType::Drop);
-    draw(field, tetris);
-     console.Print(field);
-
-     std::getchar();
-
-    }
-    
+    ControlCenter cc(tet, fld);
+    cc.StartProcess();
+   
+    std::cout << "Game over. Press any key" ;
     std::getchar();
     return 0;
 }
