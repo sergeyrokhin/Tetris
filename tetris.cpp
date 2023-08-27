@@ -114,6 +114,13 @@
         return game_is_start_;
     }
 
+    void Tetris::Start()
+    {
+        ground_.squares_.clear();
+        NewTetramino();
+        game_is_start_ = true;
+    }
+
     void Tetris::NewTetramino(TetraminoType type, int rotate) {
         tetramino_.Create(type, rotate);
         tetramino_position_ = {size_.h_ - 1, ((size_.w_ - MAX_INDEX_OF_TETRINO_SQUARES) / 2)};

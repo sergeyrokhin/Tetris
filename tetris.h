@@ -96,7 +96,7 @@ class Tetris
 
     bool GameOverCheck();
     bool GameIsStart() {return game_is_start_;}
-    void Start() {game_is_start_ = true;}
+    void Start();
     void Stop() {game_is_start_ = false;}
 
     void NewTetramino();
