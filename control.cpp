@@ -133,9 +133,9 @@ void ControlCenter::ExecProcess()
 void ControlCenter::StartProcess()
 {
     ConsoleFrame console;
-    std::thread t1(ExecProcess);
-    std::thread t2(InputProcess);
-    std::thread t3(ConsoleFrame::Process, &console, std::ref(*battle_field_ptr_.get()));
+    std::thread t1(&ControlCenter::ExecProcess, this);
+    std::thread t2(&ControlCenter::InputProcess, this);
+    std::thread t3(&ConsoleFrame::Process, &console, std::ref(*battle_field_ptr_.get()));
 
     t1.join();
     t2.join();
