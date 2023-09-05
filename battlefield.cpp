@@ -3,7 +3,7 @@
 void BattleField::Clear() {
     for (auto &i : field_)
     {
-        i = {std::string(size_.w_, ' ')};
+        i = {std::string(size_.w_, '.')};
     }
     
 }

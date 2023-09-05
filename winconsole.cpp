@@ -13,9 +13,10 @@ ConsoleFrame::ConsoleFrame() : y_zero(0)
     y_zero = csbiInfo.dwCursorPosition.Y;
 }
 
-void ConsoleFrame::Process(const BattleField &field) const
+void ConsoleFrame::Process(const BattleField &field)
 {
-    while (is_run_)
+    game_is_run_ = true;
+    while (game_is_run_)
     {
         Print(field);
     }
@@ -26,11 +27,15 @@ void ConsoleFrame::Print(const BattleField &field) const
     auto count = field.field_.size();
     for (int i = 0; i < count; i++)
     {
-        Print(field.field_[i], {i, 0});
+        Print(static_cast<char>('0' + (count - 1 - i) % 10), { i, 0 });
+        Print(field.field_[i], {i, 1});
     }
 }
 
-void ConsoleFrame::Print(const std::string& text, Coordinates position) const {
+//void ConsoleFrame::Print(const std::string& text, Coordinates position) const {
+template <class T>
+void ConsoleFrame::Print(const T& text, Coordinates position) const {
+
     COORD point = {position.w_, position.h_ + y_zero};
     SetConsoleCursorPosition(hStdout, point);
     std::cout << text;

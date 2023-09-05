@@ -9,7 +9,7 @@ int main(int argc, char const *argv[])
     
     std::cout << "hello" << std::endl;
 
-    Coordinates size = {18, 12};
+    Coordinates size = {10, 12};
     // Tetris tetris(size);
     // BattleField field(size);
     std::shared_ptr<Tetris> tet ( new Tetris(size));
@@ -18,7 +18,6 @@ int main(int argc, char const *argv[])
     ControlCenter cc(tet, fld);
     cc.StartProcess();
    
-    std::cout << "Game over. Press any key" ;
-    std::getchar();
+    std::cout<< std::endl << "Game over." ;
     return 0;
 }

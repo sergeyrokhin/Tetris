@@ -12,11 +12,13 @@ class ConsoleFrame
 {
 	HANDLE hStdout;
 	unsigned y_zero;
-    void Print(const std::string& text, Coordinates position) const;
-   public:
+//    void Print(const std::string& text, Coordinates position) const;
+    template <class T>
+    void Print(const T& text, Coordinates position) const;
+public:
 	ConsoleFrame();
-    void Process(const BattleField &field) const;
+    void Process(const BattleField &field);
     void Print(const BattleField &field) const;
-    bool is_run_ = true;
+    bool game_is_run_ = false;
 };
 

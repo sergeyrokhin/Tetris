@@ -14,5 +14,5 @@ struct Coordinates
     }
     Coordinates Shift(int h, int w) const;
     Coordinates Shift(const Coordinates &pos) const;
-    Coordinates ToField(const Coordinates &pos) const;
+    Coordinates Shift(const Coordinates &pos) const;
 };

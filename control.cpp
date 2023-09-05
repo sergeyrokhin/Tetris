@@ -45,11 +45,12 @@ class SyncStdio {
 
 void ControlCenter::InputProcess()
 {
-    //SyncStdio sync;
+   SyncStdio sync;
    while (true)
    {
        while( !_kbhit() ) {    }
-       switch (_getch())
+       auto ch = _getch();
+       switch (ch)
        {
        case 27:
         AddEvent(Event(EventType::GameOver));
@@ -60,11 +61,11 @@ void ControlCenter::InputProcess()
         AddEvent(Event(EventType::Left));
         break;
 
-       case 50:
+       case 53:
         AddEvent(Event(EventType::Drop));
         break;
 
-       case 53:
+       case 57:
         AddEvent(Event(EventType::RotateRight));
         break;
 
@@ -72,9 +73,13 @@ void ControlCenter::InputProcess()
         AddEvent(Event(EventType::Right));
         break;
 
-       case 56:
+       case 55:
         AddEvent(Event(EventType::RotateLeft));
         break;
+
+       case 56:
+           AddEvent(Event(EventType::Down));
+           break;
 
        default:
         break;
@@ -84,8 +89,9 @@ void ControlCenter::InputProcess()
 
 void ControlCenter::ExecProcess()
 {
-    bool need_draw = false;
-    while (true)
+    //tetris_ptr_.get()->NewTetramino();
+    bool need_draw = true;
+    while (tetris_ptr_.get()->GameIsStart())
     {
         while ( ! events_.empty())
         {
@@ -121,6 +127,11 @@ void ControlCenter::ExecProcess()
             default:
                 break;
             }
+            events_.pop();
+            if (! tetris_ptr_.get()->GameIsStart())
+            {
+                return;
+            }
         }
         if (need_draw)
         {
@@ -133,13 +144,17 @@ void ControlCenter::ExecProcess()
 void ControlCenter::StartProcess()
 {
     ConsoleFrame console;
+    console.game_is_run_ = true;
+    tetris_ptr_.get()->Start();
     std::thread t1(&ControlCenter::ExecProcess, this);
     std::thread t2(&ControlCenter::InputProcess, this);
     std::thread t3(&ConsoleFrame::Process, &console, std::ref(*battle_field_ptr_.get()));
 
     t1.join();
     t2.join();
-    console.is_run_ = false;
+
+    console.game_is_run_ = false;
+    t3.join();
 }
 
 // bool Event::operator<(const Event &other) const noexcept

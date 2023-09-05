@@ -45,6 +45,8 @@ class Figure
 {
 public:
     std::vector<Coordinates> squares_; // с низу с лева на право (0,0) нижняя левая
+                                        //инвариант: не допускается одинаковых
+                                        // set  не будем для этого привлекать.
     int h_offset_ = 0;    // тоже
     Coordinates GetSize();
 };
@@ -59,7 +61,9 @@ public:
 };
 
 class Ground : public Figure
-{
+{   public:
+    void Wrap(int width);
+
 };
 
 enum class MoveType
@@ -95,9 +99,9 @@ class Tetris
 
 
     bool GameOverCheck();
-    bool GameIsStart() {return game_is_start_;}
+    inline bool GameIsStart() {return game_is_start_;}
     void Start();
-    void Stop() {game_is_start_ = false;}
+    inline void Stop() {game_is_start_ = false;}
 
     void NewTetramino();
     void NewTetramino(TetraminoType type, int rotate);

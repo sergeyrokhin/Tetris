@@ -1,3 +1,4 @@
+#include <cassert>
 #include "tetris.h"
 
     std::random_device RandomMashine::rd;
@@ -45,7 +46,6 @@
 
     void Tetramino::Create(TetraminoType type, int rotate)
     {
-        h_offset_ = MAX_INDEX_OF_TETRINO_SQUARES;
         squares_.clear();
         switch (type)
         {
@@ -123,7 +123,7 @@
 
     void Tetris::NewTetramino(TetraminoType type, int rotate) {
         tetramino_.Create(type, rotate);
-        tetramino_position_ = {size_.h_ - 1, ((size_.w_ - MAX_INDEX_OF_TETRINO_SQUARES) / 2)};
+        tetramino_position_ = {size_.h_  - MAX_INDEX_OF_TETRINO_SQUARES - 1, ((size_.w_ - MAX_INDEX_OF_TETRINO_SQUARES) / 2)};
         GameOverCheck();
     }
 
@@ -138,19 +138,24 @@
         //
         if (move == MoveType::Drop)
         {
-            auto h = DropHeight();
+            auto h_drop = DropHeight();
             // передаем на грунт кубики тетрамино
             for (const auto &i : tetramino_.squares_)
             {
-                ground_.squares_.emplace_back( (tetramino_position_.h_ - h) - (MAX_INDEX_OF_TETRINO_SQUARES - i.h_), tetramino_position_.w_ + i.w_);
+                int h = (tetramino_position_.h_ - h_drop) + i.h_;
+                int w = tetramino_position_.w_ + i.w_;
+                assert(h >= 0);
+                assert(w >= 0);
+                ground_.squares_.emplace_back( h, w);
             }
             NewTetramino();
+            ground_.Wrap(size_.w_);
         }
         else if (move == MoveType::Down) // попытка спуститься на уровень, если некуда (пересечение), тогда сброс
         {
             auto pos_new = tetramino_position_.Shift(-1, 0);
             auto intersection = GetIntersection(tetramino_, pos_new);
-            if (intersection == IntersectionType::Intersect) // если спуститься, и будет пересеыение
+            if (intersection == IntersectionType::Intersect) // если спуститься, и будет пересечение
             {
                 Move(MoveType::Drop);
                 return;
@@ -191,7 +196,7 @@
         IntersectionType result = IntersectionType::Free;
         for (const auto &i : tetramino.squares_)
         {
-            auto i_abs = i.ToField(position); // в абсолютных координатах
+            auto i_abs = i.Shift(position); // в абсолютных координатах
             if (i_abs.h_ < 0)
             {
                 return IntersectionType::Intersect; // да, пересечение, те. опустился на дно
@@ -217,37 +222,27 @@
     /// @return на сколько позиций можно упасть (т.е. если соприкасается снизу, то 0)
     int Tetris::DropHeight() const
     {
-        //если ещё не упало ни одной фигурки
-        if (ground_.squares_.empty())
+        std::vector<int> max_ground(size_.w_, -1); //вектор рассояний верх упавших 
+        for (const auto& j : ground_.squares_)
         {
-            int height = size_.h_;
-            for (const auto &i : tetramino_.squares_)
+            //
+            if (j.h_ > max_ground[j.w_])
             {
-                    auto h = (tetramino_position_.h_ - tetramino_.h_offset_ +  i.h_ ); // >= 1 по инварианту
-                    if (h < height)
-                    {
-                        height = h;
-                    }
+                max_ground[j.w_] = j.h_;
             }
-            return height - 1;
         }
-        
-        std::vector<int> height(size_.w_, size_.h_);
+        auto tetramino_hight_flight = tetramino_position_.h_; // высота от дна до начала координат тетрамина
+        std::vector<int> min_tetramino(size_.w_, size_.h_); //вектор рассояний падения по каждой вертикали
         for (const auto &i : tetramino_.squares_)
         {
-            for (const auto &j : ground_.squares_)
+            auto tetramino_w = tetramino_position_.w_ + i.w_;
+            auto h_sq_bottom = (tetramino_hight_flight + i.h_ - (1 + max_ground[tetramino_w])); //от дна трафарета + до квадратика - упавшие
+            if (min_tetramino[tetramino_w] > h_sq_bottom)
             {
-                if (tetramino_position_.w_ + i.w_ == j.w_) // на одной вертикали
-                {
-                    auto h = (tetramino_position_.h_ - tetramino_.h_offset_ +  i.h_ ) - j.h_; // >= 1 по инварианту
-                    if (h < height[i.w_])
-                    {
-                        height[i.w_] = h;
-                    }
-                }
+                min_tetramino[tetramino_w] = h_sq_bottom;
             }
         }
-        return (*std::min_element(height.begin(), height.end()) - 1);
+        return (*std::min_element(min_tetramino.begin(), min_tetramino.end()));
     }
 
     void Tetramino::ShiftTop() //на самый верх сдвинуть внутри трафарета 4х4. т.е. самый верх = MAX_INDEX_OF_TETRINO_SQUARES
@@ -280,4 +275,41 @@
                 i.w_ += w;
             }
         }
+    }
+
+    void Ground::Wrap(int width)
+    {
+        std::vector<int> line;
+        for (auto i : squares_)
+        {
+            if (line.size() <= i.h_)
+            {
+                line.resize(i.h_ + 1);
+            }
+            ++line[i.h_]; //посчитаем, сколько их, но их не может быть больше width
+        }
+        std::vector<int> line_wrap(line.size());
+        int full_line_count = 0;
+        for (size_t i = 0; i < line.size(); i++) {
+            assert(line[i] <= width);
+            if (line[i] == width)
+            {
+                ++full_line_count;
+            }
+            line_wrap[i] = full_line_count;
+        }
+        if (full_line_count == 0)
+        {
+            return;
+        }
+        std::vector<Coordinates> squares_new;
+        squares_new.reserve(squares_.size() - static_cast<size_t>(width) * full_line_count);
+        for (auto s : squares_)
+        {
+            if (line[s.h_] != width)
+            {
+                squares_new.emplace_back(s.h_ - line_wrap[s.h_], s.w_);
+            }
+        }
+        squares_.swap(squares_new);
     }
