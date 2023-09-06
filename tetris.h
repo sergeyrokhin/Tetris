@@ -58,6 +58,7 @@ public:
     void RotateLeft();
     void RotateRight();
     void Create(TetraminoType type, int rotate);
+    void CorrectPositionW(Coordinates &pos, int w_size) const;
 };
 
 class Ground : public Figure

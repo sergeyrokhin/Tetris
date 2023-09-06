@@ -11,7 +11,7 @@
 class ConsoleFrame
 {
 	HANDLE hStdout;
-	unsigned y_zero;
+	int y_zero;
 //    void Print(const std::string& text, Coordinates position) const;
     template <class T>
     void Print(const T& text, Coordinates position) const;

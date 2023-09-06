@@ -36,7 +36,7 @@ void ConsoleFrame::Print(const BattleField &field) const
 template <class T>
 void ConsoleFrame::Print(const T& text, Coordinates position) const {
 
-    COORD point = {position.w_, position.h_ + y_zero};
+    COORD point = {static_cast<SHORT>(position.w_), static_cast<SHORT>(position.h_ + y_zero)};
     SetConsoleCursorPosition(hStdout, point);
     std::cout << text;
 }

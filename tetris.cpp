@@ -104,6 +104,32 @@
                 RotateRight();
             }
     }
+    //если тетрино сдвинут вправо/влево, то он может при повороте выйти за границы.
+    //поэтому после поворота нужно сдвинуть, если вышел за край
+    void Tetramino::CorrectPositionW(Coordinates& pos, int w_size) const
+    {
+        auto it = squares_.cbegin();
+        auto w_max = it->w_;
+        auto w_min = w_max;
+        for (; it < squares_.cend(); it++)
+        {
+            if (it->w_ > w_max)
+            {
+                w_max = it->w_;
+            } else if (it->w_ < w_min)
+            {
+                w_min = it->w_;
+            }
+        }
+        if (pos.w_ + w_max >= w_size)
+        {
+            pos.w_ = w_size - w_max -1;
+        } else
+            if (pos.w_ + w_min < 0)
+            {
+                pos.w_ = - w_min;
+            }
+    }
 
     bool Tetris::GameOverCheck()
     {
@@ -153,7 +179,7 @@
         }
         else if (move == MoveType::Down) // попытка спуститься на уровень, если некуда (пересечение), тогда сброс
         {
-            auto pos_new = tetramino_position_.Shift(-1, 0);
+            auto pos_new = tetramino_position_.Shift1(-1, 0);
             auto intersection = GetIntersection(tetramino_, pos_new);
             if (intersection == IntersectionType::Intersect) // если спуститься, и будет пересечение
             {
@@ -165,7 +191,7 @@
         }
         else if (move == MoveType::Left || move == MoveType::Right)
         {
-            auto pos_new = tetramino_position_.Shift(0, move == MoveType::Left ? -1 : 1);
+            auto pos_new = tetramino_position_.Shift1(0, move == MoveType::Left ? -1 : 1);
             auto intersection = GetIntersection(tetramino_, pos_new);
             if (intersection == IntersectionType::Free)
             {
@@ -183,6 +209,7 @@
             {
                 tetramino.RotateRight();
             }
+            tetramino.CorrectPositionW(tetramino_position_, size_.w_);
             auto intersection = GetIntersection(tetramino, tetramino_position_);
             if (intersection == IntersectionType::Free)
             {
@@ -196,7 +223,7 @@
         IntersectionType result = IntersectionType::Free;
         for (const auto &i : tetramino.squares_)
         {
-            auto i_abs = i.Shift(position); // в абсолютных координатах
+            auto i_abs = i.Shift2(position); // в абсолютных координатах
             if (i_abs.h_ < 0)
             {
                 return IntersectionType::Intersect; // да, пересечение, те. опустился на дно

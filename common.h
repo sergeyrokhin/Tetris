@@ -1,10 +1,10 @@
 #pragma once
-#include <stdint.h>
-
 #define MAX_INDEX_OF_TETRINO_SQUARES 3
 
-struct Coordinates
+class Coordinates
 {
+    public :
+
     int h_ = 0, w_ = 0;
     Coordinates() {}
     Coordinates(int h, int w) : h_(h), w_(w) {}
@@ -12,7 +12,6 @@ struct Coordinates
     {
         return other.h_ == h_ && other.w_ == w_;
     }
-    Coordinates Shift(int h, int w) const;
-    Coordinates Shift(const Coordinates &pos) const;
-    Coordinates Shift(const Coordinates &pos) const;
+    Coordinates Shift1(int h, int w) const;
+    Coordinates Shift2(const Coordinates &pos) const;
 };
