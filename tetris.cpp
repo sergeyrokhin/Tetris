@@ -213,7 +213,7 @@
             auto intersection = GetIntersection(tetramino, tetramino_position_);
             if (intersection == IntersectionType::Free)
             {
-                tetramino_ = tetramino; // а с копированием справится?
+                std::swap(tetramino_, tetramino);
             }
         }
     }
@@ -249,24 +249,31 @@
     /// @return на сколько позиций можно упасть (т.е. если соприкасается снизу, то 0)
     int Tetris::DropHeight() const
     {
-        std::vector<int> max_ground(size_.w_, -1); //вектор рассояний верх упавших 
-        for (const auto& j : ground_.squares_)
-        {
-            //
-            if (j.h_ > max_ground[j.w_])
-            {
-                max_ground[j.w_] = j.h_;
-            }
-        }
         auto tetramino_hight_flight = tetramino_position_.h_; // высота от дна до начала координат тетрамина
-        std::vector<int> min_tetramino(size_.w_, size_.h_); //вектор рассояний падения по каждой вертикали
+        std::vector<int> min_tetramino(size_.w_, size_.h_ - 1); //вектор рассояний падения по каждой вертикали; -1, т.к. кубик занимает одну позицию и не может падать на всю высоту
         for (const auto &i : tetramino_.squares_)
         {
-            auto tetramino_w = tetramino_position_.w_ + i.w_;
-            auto h_sq_bottom = (tetramino_hight_flight + i.h_ - (1 + max_ground[tetramino_w])); //от дна трафарета + до квадратика - упавшие
-            if (min_tetramino[tetramino_w] > h_sq_bottom)
+            auto square_w = tetramino_position_.w_ + i.w_;
+            auto square_h = tetramino_hight_flight + i.h_;
+            if (min_tetramino[square_w] > square_h)
             {
-                min_tetramino[tetramino_w] = h_sq_bottom;
+                min_tetramino[square_w] = square_h;
+            }
+
+            for (const auto& j : ground_.squares_)
+            {
+                if(j.w_ == square_w)
+                {
+                    assert(square_h != j.h_); //инвариант не допускается совпадения координат
+                    if (square_h > j.h_) //квадраты накладываться не могут, но могут быть подсунуты. Только, те что мешают падать, а если он не ниже, то он падать не мешает.
+					{
+						auto h_sq_bottom = (square_h - (1 + j.h_)); //от дна трафарета + до квадратика - упавшие
+						if (min_tetramino[square_w] > h_sq_bottom)
+						{
+							min_tetramino[square_w] = h_sq_bottom;
+						}
+					}
+                }
             }
         }
         return (*std::min_element(min_tetramino.begin(), min_tetramino.end()));
@@ -307,11 +314,11 @@
     void Ground::Wrap(int width)
     {
         std::vector<int> line;
-        for (auto i : squares_)
+        for (const auto &i : squares_)
         {
             if (line.size() <= i.h_)
             {
-                line.resize(i.h_ + 1);
+                line.resize(static_cast<size_t>(i.h_) + 1);
             }
             ++line[i.h_]; //посчитаем, сколько их, но их не может быть больше width
         }
@@ -331,7 +338,7 @@
         }
         std::vector<Coordinates> squares_new;
         squares_new.reserve(squares_.size() - static_cast<size_t>(width) * full_line_count);
-        for (auto s : squares_)
+        for (const auto &s : squares_)
         {
             if (line[s.h_] != width)
             {

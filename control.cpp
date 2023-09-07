@@ -48,7 +48,12 @@ void ControlCenter::InputProcess()
    SyncStdio sync;
    while (true)
    {
-       while( !_kbhit() ) {    }
+       while( !_kbhit() ) { 
+           if (!tetris_ptr_.get()->GameIsStart())
+           {
+               return;
+           }
+       }
        auto ch = _getch();
        switch (ch)
        {
@@ -96,47 +101,50 @@ void ControlCenter::ExecProcess()
         while ( ! events_.empty())
         {
             need_draw = true;
-            std::lock_guard<std::mutex> guard(event_mutex_);
-            switch (events_.top().event_)
+            if (tetris_ptr_.get()->GameIsStart())
             {
-            case EventType::Down :
-                tetris_ptr_.get()->Move(MoveType::Down);
-                break;
-            case EventType::Left :
-                tetris_ptr_.get()->Move(MoveType::Left);
-                break;
-            case EventType::Right :
-                tetris_ptr_.get()->Move(MoveType::Right);
-                break;
-            case EventType::RotateLeft :
-                tetris_ptr_.get()->Move(MoveType::RotateL);
-                break;
-            case EventType::RotateRight :
-                tetris_ptr_.get()->Move(MoveType::RotateR);
-                break;
-            case EventType::Drop :
-                tetris_ptr_.get()->Move(MoveType::Drop);
-                break;
-            case EventType::GameOver :
-                tetris_ptr_.get()->Stop();
-                return;
-                break;
-            case EventType::GameStart :
-                tetris_ptr_.get()->Start();
-                break;
-            default:
-                break;
+                std::lock_guard<std::mutex> guard(event_mutex_);
+                switch (events_.top().event_)
+                {
+                case EventType::Down:
+                    tetris_ptr_.get()->Move(MoveType::Down);
+                    break;
+                case EventType::Left:
+                    tetris_ptr_.get()->Move(MoveType::Left);
+                    break;
+                case EventType::Right:
+                    tetris_ptr_.get()->Move(MoveType::Right);
+                    break;
+                case EventType::RotateLeft:
+                    tetris_ptr_.get()->Move(MoveType::RotateL);
+                    break;
+                case EventType::RotateRight:
+                    tetris_ptr_.get()->Move(MoveType::RotateR);
+                    break;
+                case EventType::Drop:
+                    tetris_ptr_.get()->Move(MoveType::Drop);
+                    break;
+                case EventType::GameOver:
+                    tetris_ptr_.get()->Stop();
+                    return;
+                    break;
+                case EventType::GameStart:
+                    tetris_ptr_.get()->Start();
+                    break;
+                default:
+                    break;
+                }
             }
             events_.pop();
-            if (! tetris_ptr_.get()->GameIsStart())
-            {
-                return;
-            }
         }
         if (need_draw)
         {
                 draw(*battle_field_ptr_.get(), *tetris_ptr_.get());
                 need_draw = false;
+        }
+        if (!tetris_ptr_.get()->GameIsStart())
+        {
+            return;
         }
     }
 }
