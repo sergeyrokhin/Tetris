@@ -3,43 +3,12 @@
 #include <vector>
 #include <memory>
 #include <algorithm>
-#include <random>
 
 #include "common.h"
 
 #define TETRINO_STENSIL_SIZE 4
-enum class TetraminoType
-{
-    O,
-    I,
-    L1,
-    L2,
-    Z1,
-    Z2,
-    T
-};
 
-
-class RandomMashine
-{
-    static std::random_device rd; // non-deterministic generator
-    std::mt19937 gen;             // to seed mersenne twister.
-    std::uniform_int_distribution<> dist_tetramino;
-    std::uniform_int_distribution<> dist_rotate;
-
-public:
-    RandomMashine() : gen(rd()), dist_tetramino(0, 6), dist_rotate(-1, 2)
-    {
-    }
-    TetraminoType GetRandomTetraminoType()
-    {
-        return static_cast<TetraminoType>(dist_tetramino(gen));
-    }
-    int GetRandomRotateType()
-    {
-        return dist_rotate(gen);
-    }
-};
+enum class TetraminoType;
 
 class Figure
 {

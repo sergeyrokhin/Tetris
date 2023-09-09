@@ -2,7 +2,16 @@
 #include "tetris.h"
 
     std::random_device RandomMashine::rd;
-
+    enum class TetraminoType
+    {
+        O,
+        I,
+        L1,
+        L2,
+        Z1,
+        Z2,
+        T
+    };
     Coordinates Figure::GetSize()
     {
         Coordinates size;

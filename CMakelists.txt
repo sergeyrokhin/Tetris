@@ -4,7 +4,7 @@ project(Tetris CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 
-set(TETRIS_CPP_FILES main.cpp tetris.cpp battlefield.cpp common.cpp winconsole.cpp control.cpp input_device.cpp)
-set(TETRIS_H_FILES tetris.h battlefield.h common.h winconsole.h control.h input_device.h) 
+set(TETRIS_CPP_FILES src/main.cpp src/tetris.cpp src/battlefield.cpp src/common.cpp src/winconsole.cpp src/control.cpp src/input_device.cpp src/observer.cpp)
+set(TETRIS_H_FILES src/tetris.h src/battlefield.h src/common.h src/winconsole.h src/control.h src/input_device.h src/observer.h) 
 
 add_executable(${PROJECT_NAME} ${TETRIS_CPP_FILES} ${TETRIS_H_FILES})

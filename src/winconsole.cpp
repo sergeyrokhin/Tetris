@@ -13,7 +13,7 @@ ConsoleFrame::ConsoleFrame() : y_zero(0)
     y_zero = csbiInfo.dwCursorPosition.Y;
 }
 
-void ConsoleFrame::Process(const BattleField &field)
+void ConsoleFrame::ConsoleProcessThread(const BattleField &field)
 {
     game_is_run_ = true;
     while (game_is_run_)

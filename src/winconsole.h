@@ -17,7 +17,7 @@ class ConsoleFrame
     void Print(const T& text, Coordinates position) const;
 public:
 	ConsoleFrame();
-    void Process(const BattleField &field);
+    void ConsoleProcessThread(const BattleField &field);
     void Print(const BattleField &field) const;
     bool game_is_run_ = false;
 };

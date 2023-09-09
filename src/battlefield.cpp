@@ -8,7 +8,7 @@ void BattleField::Clear() {
     
 }
 
-void BattleField::draw(const Figure &figure, Coordinates position)
+void BattleField::Draw(const Figure &figure, Coordinates position)
 {
     for (const auto& i : figure.squares_)
     {
@@ -44,6 +44,6 @@ std::ostream& operator<<(std::ostream &out, const BattleField & field )
 void draw(BattleField &field, const Tetris &tetris)
 {
     field.Clear();
-    field.draw(tetris.ground_);
-    field.draw(tetris.tetramino_, tetris.tetramino_position_);
+    field.Draw(tetris.ground_);
+    field.Draw(tetris.tetramino_, tetris.tetramino_position_);
 }
