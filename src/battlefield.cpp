@@ -22,10 +22,13 @@ void BattleField::Draw(const Figure &figure, Coordinates position)
     
 }
 
-std::ostream& operator<<(std::ostream &out, const BattleField & field )
+
+//только для отладки
+std::ostream& operator<<(std::ostream& out, const std::shared_ptr<BattleField>(field))
 {
     out << ' ';
-    for (size_t i = 0; i < field.size_.w_; i++)
+    auto size = field.get()->GetSize();
+    for (size_t i = 0; i < size.w_; i++)
     {
                 out << (i % 10);
 
@@ -34,16 +37,16 @@ std::ostream& operator<<(std::ostream &out, const BattleField & field )
     out << std::endl;
     
     int k = 0;
-    for (auto i = field.field_.crbegin(); i != field.field_.crend(); i++)
+    for (auto i = field.get()->field_.crbegin(); i != field.get()->field_.crend(); i++)
     {
-        out << ( (field.size_.h_ - ++k) % 10) << *i << std::endl;
+        out << ( (size.h_ - ++k) % 10) << *i << std::endl;
     }
     return out;
 }
 
-void draw(BattleField &field, const Tetris &tetris)
+void draw(std::shared_ptr<BattleField> field, const Tetris &tetris)
 {
-    field.Clear();
-    field.Draw(tetris.ground_);
-    field.Draw(tetris.tetramino_, tetris.tetramino_position_);
+    field.get()->Clear();
+    field.get()->Draw(tetris.ground_);
+    field.get()->Draw(tetris.tetramino_, tetris.tetramino_position_);
 }

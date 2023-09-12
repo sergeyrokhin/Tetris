@@ -1,9 +1,11 @@
 #pragma once
 
-#include "battlefield.h"
 #include <queue>
 #include <memory>
 #include <mutex>
+
+#include "battlefield.h"
+
 
 enum class EventType;
 
@@ -25,7 +27,7 @@ class MyPriorityQueue : public std::priority_queue<Event> {
 
 class ControlCenter {
     Tetris tetris_;
-    BattleField battle_field_;
+    std::shared_ptr<BattleField>(battle_field_ptr);
     MyPriorityQueue events_;
     void InputProcessThread();
     void ExecProcessThread();

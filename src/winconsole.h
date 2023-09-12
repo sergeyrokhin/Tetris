@@ -7,6 +7,7 @@
 #include "common.h"
 
 #include "battlefield.h"
+#include "observer.h"
 
 class ConsoleFrame
 {
@@ -17,8 +18,12 @@ class ConsoleFrame
     void Print(const T& text, Coordinates position) const;
 public:
 	ConsoleFrame();
-    void ConsoleProcessThread(const BattleField &field);
-    void Print(const BattleField &field) const;
-    bool game_is_run_ = false;
+    //void ConsoleProcessThread(const std::shared_ptr<BattleField> field_ptr);
+    void Print(const std::shared_ptr<BattleField> field_ptr) const;
 };
+
+//template <typename T>
+//void Observer::ObserverObject<T>::Draw(){
+//    ::Draw();
+//}
 

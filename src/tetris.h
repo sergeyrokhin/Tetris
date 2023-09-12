@@ -6,6 +6,9 @@
 
 #include "common.h"
 
+
+//#include "observer.h"
+
 #define TETRINO_STENSIL_SIZE 4
 
 enum class TetraminoType;
@@ -64,6 +67,7 @@ class Tetris
     Ground ground_;
     Tetramino tetramino_;
     Coordinates tetramino_position_;
+    //ObserverSet observer_;
 
     Tetris(Coordinates size) : size_(size) {}
 

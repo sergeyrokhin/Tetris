@@ -141,7 +141,7 @@ void ControlCenter::ExecProcessThread()
         }
         if (need_draw)
         {
-                draw(battle_field_, tetris_);
+                draw(battle_field_ptr, tetris_);
                 need_draw = false;
         }
         if (!tetris_.GameIsStart())
@@ -151,22 +151,20 @@ void ControlCenter::ExecProcessThread()
     }
 }
 
-ControlCenter::ControlCenter(Coordinates size) : tetris_(size), battle_field_(size)
+ControlCenter::ControlCenter(Coordinates size) : tetris_(size), battle_field_ptr(new BattleField(size))
 {
 }
 
 void ControlCenter::StartProceses()
 {
-    ConsoleFrame console;
-    console.game_is_run_ = true;
     tetris_.Start();
     std::thread t1(&ControlCenter::ExecProcessThread, this);
     std::thread t2(&ControlCenter::InputProcessThread, this);
-    std::thread t3(&ConsoleFrame::ConsoleProcessThread, &console, std::ref(battle_field_));
+    //tetris_.observer_.emplace_back(Observer{ ConsoleFrame(), battle_field_ptr });
+    
+    Observer obs_console(ConsoleFrame(), battle_field_ptr);
 
     t1.join();
     t2.join();
-
-    console.game_is_run_ = false;
-    t3.join();
+    obs_console.Stop();
 }

@@ -13,26 +13,27 @@ ConsoleFrame::ConsoleFrame() : y_zero(0)
     y_zero = csbiInfo.dwCursorPosition.Y;
 }
 
-void ConsoleFrame::ConsoleProcessThread(const BattleField &field)
-{
-    game_is_run_ = true;
-    while (game_is_run_)
-    {
-        Print(field);
-    }
-}
+//void ConsoleFrame::ConsoleProcessThread(const std::shared_ptr<BattleField> field_ptr)
+//{
+//    game_is_run_ = true;
+//    while (game_is_run_)
+//    {
+//        Print(field_ptr);
+//    }
+//}
 
-void ConsoleFrame::Print(const BattleField &field) const
+void ConsoleFrame::Print(const std::shared_ptr<BattleField> field_ptr) const
 {
-    auto count = field.field_.size();
+    auto count = field_ptr.get()->field_.size();
     for (int i = 0; i < count; i++)
     {
+        //шкала глубины
         Print(static_cast<char>('0' + (count - 1 - i) % 10), { i, 0 });
-        Print(field.field_[i], {i, 1});
+        //само поле игры
+        Print(field_ptr.get()->field_[i], {i, 1});
     }
 }
 
-//void ConsoleFrame::Print(const std::string& text, Coordinates position) const {
 template <class T>
 void ConsoleFrame::Print(const T& text, Coordinates position) const {
 
