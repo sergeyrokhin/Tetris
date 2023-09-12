@@ -144,9 +144,17 @@
     {
         if (game_is_start_ && GetIntersection(tetramino_, tetramino_position_) != IntersectionType::Free)
         {
-            game_is_start_ = false;
+            Stop();
         }
         return game_is_start_;
+    }
+
+    void Tetris::Draw()
+    {
+        for (auto& i : observer_)
+        {
+            i.Draw();
+        }
     }
 
     void Tetris::Start()
@@ -154,6 +162,30 @@
         ground_.squares_.clear();
         NewTetramino();
         game_is_start_ = true;
+        for (auto& i : observer_)
+        {
+            i.Start();
+        }
+    }
+
+    void Tetris::Stop()
+    {
+        game_is_start_ = false;
+        for (auto& i : observer_)
+        {
+            i.Stop();
+        }
+        for (auto& i : observer_)
+        {
+            while (i.IsRun())
+            {
+
+            }
+        }
+    }
+
+    void Tetris::WaitObserverFinish()
+    {
     }
 
     void Tetris::NewTetramino(TetraminoType type, int rotate) {
@@ -225,6 +257,7 @@
                 std::swap(tetramino_, tetramino);
             }
         }
+        Draw();
     }
 
     IntersectionType Tetris::GetIntersection(const Tetramino &tetramino, const Coordinates &position) const
