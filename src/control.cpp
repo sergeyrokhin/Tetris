@@ -55,6 +55,7 @@ void ControlCenter::InputProcessThread()
            {
                return;
            }
+           wait();
        }
        auto ch = _getch();
        switch (ch)
@@ -148,6 +149,7 @@ void ControlCenter::ExecProcessThread()
         {
             return;
         }
+        wait();
     }
 }
 
@@ -157,14 +159,20 @@ ControlCenter::ControlCenter(Coordinates size) : tetris_(size), battle_field_ptr
 
 void ControlCenter::StartProceses()
 {
+
+    tetris_.observer_.emplace_back(std::move(*new Observer(std::move(ConsoleFrame({ 2, 0 })), battle_field_ptr)));
+    tetris_.observer_.emplace_back(std::move(*new Observer(std::move(ConsoleFrame({ 3, 20 })), battle_field_ptr)));
+    tetris_.observer_.emplace_back(std::move(*new Observer(std::move(ConsoleFrame({ 3, 45 })), battle_field_ptr)));
+
     tetris_.Start();
+
     std::thread t1(&ControlCenter::ExecProcessThread, this);
     std::thread t2(&ControlCenter::InputProcessThread, this);
-    //tetris_.observer_.emplace_back(Observer{ ConsoleFrame(), battle_field_ptr });
-    
-    Observer obs_console(ConsoleFrame(), battle_field_ptr);
+
+    //Observer obs_console(ConsoleFrame(), battle_field_ptr);
 
     t1.join();
     t2.join();
-    obs_console.Stop();
+
+    //obs_console.Stop();
 }

@@ -7,7 +7,7 @@
 #include "common.h"
 
 
-//#include "observer.h"
+#include "observer.h"
 
 #define TETRINO_STENSIL_SIZE 4
 
@@ -67,7 +67,7 @@ class Tetris
     Ground ground_;
     Tetramino tetramino_;
     Coordinates tetramino_position_;
-    //ObserverSet observer_;
+    ObserverSet observer_;
 
     Tetris(Coordinates size) : size_(size) {}
 
@@ -75,7 +75,8 @@ class Tetris
     bool GameOverCheck();
     inline bool GameIsStart() {return game_is_start_;}
     void Start();
-    inline void Stop() {game_is_start_ = false;}
+    void Stop();
+    void WaitObserverFinish();
 
     void NewTetramino();
     void NewTetramino(TetraminoType type, int rotate);
@@ -91,4 +92,5 @@ class Tetris
     /// @brief
     /// @return на сколько позиций можно упасть (т.е. если соприкасается снизу, то 0)
     int DropHeight() const;
+    void Draw();
 };

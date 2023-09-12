@@ -1,6 +1,5 @@
 ﻿#include <iostream>
 
-#include "battlefield.h"
 #include "control.h"
 
 

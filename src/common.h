@@ -2,6 +2,8 @@
 
 #include <random>
 
+void wait();
+
 enum class TetraminoType;
 
 constexpr auto MAX_INDEX_OF_TETRINO_SQUARES = 3;

@@ -1,4 +1,6 @@
 #include "common.h"
+#include <chrono>
+#include <thread>
 
     Coordinates Coordinates::Shift1(int h, int w) const
     {
@@ -8,4 +10,12 @@
     Coordinates Coordinates::Shift2(const Coordinates &pos) const
     {
         return {h_ + pos.h_, w_ + pos.w_};
+    }
+
+    void wait() {
+        using namespace std::this_thread;     // sleep_for, sleep_until
+        using namespace std::chrono_literals; // ns, us, ms, s, h, etc.
+        using std::chrono::system_clock;
+        sleep_for(100ms);
+        //sleep_until(system_clock::now() + 1s);
     }

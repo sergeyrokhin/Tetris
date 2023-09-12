@@ -24,7 +24,7 @@ void BattleField::Draw(const Figure &figure, Coordinates position)
 
 
 //только для отладки
-std::ostream& operator<<(std::ostream& out, const std::shared_ptr<BattleField>(field))
+std::ostream& operator<<(std::ostream& out, const std::shared_ptr<BattleField> &field)
 {
     out << ' ';
     auto size = field.get()->GetSize();

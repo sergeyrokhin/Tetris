@@ -1,4 +1,5 @@
 #pragma once
+#include <mutex>
 
 #include <string>
 #include <iostream>
@@ -11,19 +12,20 @@
 
 class ConsoleFrame
 {
-	HANDLE hStdout;
-	int y_zero;
-//    void Print(const std::string& text, Coordinates position) const;
+    struct WinConsole {
+        int y_zero = 0;
+        HANDLE hStdout;
+        std::mutex mutex_;
+        bool is_initialized = false;
+    };
+    
+    static WinConsole console_;
+    Coordinates position_;
     template <class T>
     void Print(const T& text, Coordinates position) const;
 public:
-	ConsoleFrame();
-    //void ConsoleProcessThread(const std::shared_ptr<BattleField> field_ptr);
-    void Print(const std::shared_ptr<BattleField> field_ptr) const;
+    ConsoleFrame(const Coordinates& position = {});
+    ~ConsoleFrame() = default;
+    void Print(const BattleField& battle_field) const;
 };
-
-//template <typename T>
-//void Observer::ObserverObject<T>::Draw(){
-//    ::Draw();
-//}
 
