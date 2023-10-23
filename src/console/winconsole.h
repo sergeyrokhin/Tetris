@@ -3,29 +3,33 @@
 
 #include <string>
 #include <iostream>
-#include <conio.h>
-#include <windows.h>
-#include "common.h"
 
-#include "battlefield.h"
-#include "observer.h"
+#include "../battlefield.h"
+
+namespace console {
+    int getch_my();
+    int kbhit_my();    
+}
 
 class ConsoleFrame
 {
     struct WinConsole {
-        int y_zero = 0;
-        HANDLE hStdout;
-        std::mutex mutex_;
+        static std::mutex mutex_;
         bool is_initialized = false;
     };
-    
+private:    
     static WinConsole console_;
     Coordinates position_;
+private:    
     template <class T>
     void Print(const T& text, Coordinates position) const;
+    void InicializeWinConsole();
 public:
     ConsoleFrame(const Coordinates& position = {});
-    ~ConsoleFrame() = default;
+    ConsoleFrame(const ConsoleFrame&);
+    ConsoleFrame& operator=(const ConsoleFrame&);
+    ConsoleFrame();
     void Print(const BattleField& battle_field) const;
 };
+
 

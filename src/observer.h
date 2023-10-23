@@ -1,7 +1,10 @@
 #pragma once
 
+#include <vector>
 #include <iostream>
 #include <memory>
+#include <atomic>
+#include <thread>
 
 class BattleField;
 
@@ -25,13 +28,15 @@ class Observer
 
 		ObserverObject() = delete;
 		
-		ObserverObject(T& x, std::shared_ptr<BattleField> &field_ptr) : data_(std::move(x)), field_ptr_(field_ptr){
+		ObserverObject(T&& x, std::shared_ptr<BattleField> &field_ptr) : data_(std::move(x)), field_ptr_(field_ptr){
 		}
 
-		ObserverObject(const ObserverObject& x)
+		ObserverObject(ObserverObject&& x) : data_(std::move(x.data_)), field_ptr_(x.field_ptr_)
 		{
-			this->data_ = std::move(x.data_);
-			this->field_ptr_ = x.field_ptr_;
+		}
+
+		ObserverObject(const ObserverObject& x) : data_(x.data_), field_ptr_(x.field_ptr_)
+		{
 		}
 
 		~ObserverObject() = default;
@@ -59,7 +64,7 @@ class Observer
 			if ( !stoped_.load(std::memory_order_relaxed))
 			{
 				stoped_.store(false, std::memory_order_relaxed);
-				//конструктор забирает объект, 
+				//РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ Р·Р°Р±РёСЂР°РµС‚ РѕР±СЉРµРєС‚, 
 				std::thread t(&ObserverObject::ExecProcessThread, this);
 				t.detach();
 			}
@@ -81,17 +86,16 @@ class Observer
 
 public:
 	template <typename T>
-	Observer(T &x, std::shared_ptr<BattleField>& field_ptr) : self_(std::make_unique<ObserverObject<T>>(std::move(x), field_ptr)) {
+	Observer(T &&x, std::shared_ptr<BattleField> &field_ptr) : self_(std::make_unique<ObserverObject<T>>(std::move(x), field_ptr))
+	{
 	}
 	// copy ctor, move ctor and assignment
-public:
-	Observer(const Observer& x) : self_(x.self_->Copy()) {}
-	Observer(Observer&& x) noexcept = default;
-	Observer& operator=(Observer x) noexcept {
+	Observer(const Observer&& x) : self_(x.self_->Copy()) {}
+	Observer& operator=(Observer&& x) noexcept {
 		self_ = std::move(x.self_);
 		return *this;
 	}
-	void Stop() { self_.get()->Stop(); }
+	void Stop() { Draw(); self_.get()->Stop(); }
 	void Draw() { self_.get()->Draw(); }
 	void Start() { self_.get()->Start(); }
 	bool IsRun() { return self_.get()->IsRun(); }

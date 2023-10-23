@@ -1,9 +1,9 @@
-#include <conio.h>
 #include <stdio.h>
 #include <thread>
 
 #include "control.h"
-#include "winconsole.h"
+#include "console/winconsole.h"
+
 
 enum class EventType { GameOver, GameStart, NextCycle, Down, Left, Right, RotateLeft, RotateRight, Drop };
 
@@ -50,47 +50,44 @@ void ControlCenter::InputProcessThread()
    SyncStdio sync;
    while (true)
    {
-       while( !_kbhit() ) { 
-           if (!tetris_.GameIsStart())
-           {
-               return;
-           }
-           wait();
-       }
-       auto ch = _getch();
-       switch (ch)
-       {
-       case 27:
-        AddEvent(Event(EventType::GameOver));
-        return;
-        break;
-       
-       case 52:
-        AddEvent(Event(EventType::Left));
-        break;
+        if (!tetris_.GameIsStart())
+        {
+            return;
+        }
+        auto ch = console::getch_my();
+        switch (ch)
+        {
+        case 32:
+            AddEvent(Event(EventType::GameOver));
+            return;
+            break;
 
-       case 53:
-        AddEvent(Event(EventType::Drop));
-        break;
+        case 52:
+            AddEvent(Event(EventType::Left));
+            break;
 
-       case 57:
-        AddEvent(Event(EventType::RotateRight));
-        break;
+        case 53:
+            AddEvent(Event(EventType::Drop));
+            break;
 
-       case 54:
-        AddEvent(Event(EventType::Right));
-        break;
+        case 57:
+            AddEvent(Event(EventType::RotateRight));
+            break;
 
-       case 55:
-        AddEvent(Event(EventType::RotateLeft));
-        break;
+        case 54:
+            AddEvent(Event(EventType::Right));
+            break;
 
-       case 56:
-           AddEvent(Event(EventType::Down));
-           break;
+        case 55:
+            AddEvent(Event(EventType::RotateLeft));
+            break;
 
-       default:
-        break;
+        case 56:
+            AddEvent(Event(EventType::Down));
+            break;
+
+        default:
+            break;
        }
    }
 }
@@ -101,6 +98,11 @@ void ControlCenter::ExecProcessThread()
     bool need_draw = true;
     while (tetris_.GameIsStart())
     {
+        if (battle_field_ptr->NeedSent())
+        {
+            battle_field_ptr->SetNeedSent(false);
+            tetris_.Draw();
+        }
         while ( ! events_.empty())
         {
             need_draw = true;
@@ -157,22 +159,16 @@ ControlCenter::ControlCenter(Coordinates size) : tetris_(size), battle_field_ptr
 {
 }
 
+
 void ControlCenter::StartProceses()
 {
-
-    tetris_.observer_.emplace_back(std::move(*new Observer(std::move(ConsoleFrame({ 2, 0 })), battle_field_ptr)));
-    tetris_.observer_.emplace_back(std::move(*new Observer(std::move(ConsoleFrame({ 3, 20 })), battle_field_ptr)));
-    tetris_.observer_.emplace_back(std::move(*new Observer(std::move(ConsoleFrame({ 3, 45 })), battle_field_ptr)));
 
     tetris_.Start();
 
     std::thread t1(&ControlCenter::ExecProcessThread, this);
     std::thread t2(&ControlCenter::InputProcessThread, this);
 
-    //Observer obs_console(ConsoleFrame(), battle_field_ptr);
-
     t1.join();
     t2.join();
 
-    //obs_console.Stop();
 }

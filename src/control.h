@@ -6,7 +6,6 @@
 
 #include "battlefield.h"
 
-
 enum class EventType;
 
 class Event {
@@ -28,12 +27,17 @@ class MyPriorityQueue : public std::priority_queue<Event> {
 class ControlCenter {
     Tetris tetris_;
     std::shared_ptr<BattleField>(battle_field_ptr);
-    MyPriorityQueue events_;
+    MyPriorityQueue events_; //Guarded event_mutex_
     void InputProcessThread();
     void ExecProcessThread();
 
     public:
         ControlCenter(Coordinates size);
+    
+  	template <typename T>
+    void AddObserver(T x) {
+        tetris_.observer_.emplace_back(std::move(x), battle_field_ptr);
+    }
     void StartProceses();
     void AddEvent(Event&& event);
 private:

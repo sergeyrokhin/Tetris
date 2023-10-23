@@ -177,6 +177,7 @@
         }
         for (auto& i : observer_)
         {
+            //Wait for destroyed all observers
             while (i.IsRun())
             {
 
@@ -257,7 +258,6 @@
                 std::swap(tetramino_, tetramino);
             }
         }
-        Draw();
     }
 
     IntersectionType Tetris::GetIntersection(const Tetramino &tetramino, const Coordinates &position) const

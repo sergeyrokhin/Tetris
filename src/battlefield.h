@@ -16,16 +16,20 @@ class Canvas
 
 class BattleField {
     Coordinates size_;
+	std::atomic<bool> ready_sent_redraw_ = { false };
 
     public:
 
     std::vector<std::string> field_;
-    BattleField(Coordinates size) : size_(size), field_(size_.h_, std::string(size_.w_, ' ')) {}
+    BattleField(Coordinates size) : size_(size), field_(size_.h_, std::string(size_.w_, '.')) {}
     Coordinates GetSize() { return size_; }
+
 
     void Clear();
     void Draw(const Figure& figure, Coordinates position = { 0, 0 });
+    void SetNeedSent(bool ready);
+    bool NeedSent();
 
     friend void draw(std::shared_ptr<BattleField> field, const Tetris& tetris);
-    friend std::ostream& operator<<(std::ostream& out, const BattleField& field);
+    friend std::ostream& operator<<(std::ostream& out, BattleField& field);
 };

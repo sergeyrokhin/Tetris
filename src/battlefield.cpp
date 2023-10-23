@@ -22,12 +22,38 @@ void BattleField::Draw(const Figure &figure, Coordinates position)
     
 }
 
+void BattleField::SetNeedSent(bool ready)
+{
+    ready_sent_redraw_.store(ready, std::memory_order_relaxed);
+}
 
-//только для отладки
+bool BattleField::NeedSent()
+{
+    return ready_sent_redraw_.load(std::memory_order_relaxed);
+}
+
+
+void draw(std::shared_ptr<BattleField> field, const Tetris &tetris)
+{
+    field->Clear();
+    field->Draw(tetris.ground_);
+    field->Draw(tetris.tetramino_, tetris.tetramino_position_);
+    field->SetNeedSent(true);
+
+}
+
+
+//С‚РѕР»СЊРєРѕ РґР»СЏ РѕС‚Р»Р°РґРєРё
 std::ostream& operator<<(std::ostream& out, const std::shared_ptr<BattleField> &field)
 {
+    out << (*field.get());
+    return out;
+}
+
+std::ostream &operator<<(std::ostream &out, BattleField &field)
+{
     out << ' ';
-    auto size = field.get()->GetSize();
+    auto size = field.GetSize();
     for (size_t i = 0; i < size.w_; i++)
     {
                 out << (i % 10);
@@ -37,16 +63,9 @@ std::ostream& operator<<(std::ostream& out, const std::shared_ptr<BattleField> &
     out << std::endl;
     
     int k = 0;
-    for (auto i = field.get()->field_.crbegin(); i != field.get()->field_.crend(); i++)
+    for (auto i = field.field_.crbegin(); i != field.field_.crend(); i++)
     {
         out << ( (size.h_ - ++k) % 10) << *i << std::endl;
     }
     return out;
-}
-
-void draw(std::shared_ptr<BattleField> field, const Tetris &tetris)
-{
-    field.get()->Clear();
-    field.get()->Draw(tetris.ground_);
-    field.get()->Draw(tetris.tetramino_, tetris.tetramino_position_);
 }
