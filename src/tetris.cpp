@@ -358,7 +358,7 @@
         std::vector<int> line;
         for (const auto &i : squares_)
         {
-            if (line.size() <= i.h_)
+            if (line.size() <= static_cast<size_t>(i.h_))
             {
                 line.resize(static_cast<size_t>(i.h_) + 1);
             }

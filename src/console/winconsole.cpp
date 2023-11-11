@@ -105,7 +105,7 @@ ConsoleFrame::ConsoleFrame()
 
 void ConsoleFrame::Print(const BattleField &battle_field) const
 {
-    auto count = battle_field.field_.size();
+    int count = static_cast<int>(battle_field.field_.size());
     for (int i = 0; i < count; i++)
     {
         // шкала глубины

@@ -41,7 +41,7 @@ class Observer
 
 		~ObserverObject() = default;
 
-		void ExecProcessThread() {
+		void PrintProcessThread() {
 			thread_run_.store(true, std::memory_order_relaxed);
 			while ( ! stoped_.load(std::memory_order_relaxed))
 			{
@@ -65,7 +65,7 @@ class Observer
 			{
 				stoped_.store(false, std::memory_order_relaxed);
 				//конструктор забирает объект, 
-				std::thread t(&ObserverObject::ExecProcessThread, this);
+				std::thread t(&ObserverObject::PrintProcessThread, this);
 				t.detach();
 			}
 		}

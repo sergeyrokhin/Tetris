@@ -5,14 +5,8 @@
 
 
 
-int main(int argc, char const *argv[])
+int main()
 {
-    /* code */
-    
-    std::cout << "Control key: Space - Exit" << std::endl;
-    std::cout << "4: Left; 6: Right; 9: Down" << std::endl;
-    std::cout << "7:RotateLeft; 9: RotateRight; 5: Drop" << std::endl;
-
     //Размер стакана 16 на 15
 	ControlCenter cc({ 16, 15 });
 

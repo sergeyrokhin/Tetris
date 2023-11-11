@@ -14,7 +14,7 @@ void BattleField::Draw(const Figure &figure, Coordinates position)
     {
         auto h = size_.h_ - 1 - position.h_ + (figure.h_offset_ - i.h_);
         auto w = position.w_ + i.w_;
-        if (h >= 0 && h < field_.size() && w >= 0 && w < field_[0].size())
+        if (h >= 0 && h < static_cast<int>(field_.size()) && w >= 0 && w < static_cast<int>(field_[0].size()))
         {
             field_[h][w] = '#';
         }
@@ -54,7 +54,7 @@ std::ostream &operator<<(std::ostream &out, BattleField &field)
 {
     out << ' ';
     auto size = field.GetSize();
-    for (size_t i = 0; i < size.w_; i++)
+    for (int i = 0; i < size.w_; i++)
     {
                 out << (i % 10);
 

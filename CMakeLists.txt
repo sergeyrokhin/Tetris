@@ -14,6 +14,24 @@ add_executable(TestInputConsole src/tests/test_winconsole/main_test_input.cpp sr
 
 add_executable(${PROJECT_NAME} ${TETRIS_CPP_FILES} ${CONSOLE_CPP_FILES} ${TETRIS_H_FILES}   ${CONSOLE_H_FILES} )
 
-target_include_directories(${PROJECT_NAME} PUBLIC src/)
-target_include_directories(TestWinConsole PUBLIC src/)
-target_include_directories(TestInputConsole PUBLIC src/)
+list(APPEND TARGETS ${PROJECT_NAME})
+list(APPEND TARGETS TestWinConsole)
+list(APPEND TARGETS TestInputConsole)
+
+foreach(target ${TARGETS})
+  target_compile_features(${target} PUBLIC cxx_std_17)
+  set_target_properties(${target} PROPERTIES CXX_STANDARD_REQUIRED ON)
+
+  target_link_libraries(${target} PRIVATE ${CMAKE_THREAD_LIBS_INIT})
+  target_include_directories(${target} PUBLIC src/)
+
+  if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR
+    CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang" OR
+    CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    target_compile_options(${target}
+      PRIVATE -g -Wall -Wextra -Werror -pedantic)
+  elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    target_compile_options(${target}
+      PRIVATE /W4 /WX)
+  endif()
+endforeach()
