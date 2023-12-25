@@ -1,5 +1,6 @@
+#pragma once
 #include <stdio.h>
-
+//Только в консоли linux
 namespace console {
 
 // clear the screen

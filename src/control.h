@@ -1,12 +1,12 @@
 #pragma once
 
+#include "battlefield.h"
+
 #include <queue>
 #include <memory>
 #include <mutex>
 //#include <chrono>
 #include <condition_variable>
-
-#include "battlefield.h"
 
 constexpr std::chrono::milliseconds DELAY_CYCLE = std::chrono::milliseconds(500);
 

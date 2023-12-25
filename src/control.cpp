@@ -1,8 +1,8 @@
+#include "console/consoleframe.h"
+#include "control.h"
+
 #include <stdio.h>
 #include <thread>
-
-#include "control.h"
-#include "console/winconsole.h"
 
 enum class EventType
 {
