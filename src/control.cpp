@@ -122,7 +122,6 @@ void ControlCenter::InputProcessThread()
 
 void ControlCenter::TetrisProcessThread()
 {
-    // tetris_.NewTetramino();
     bool need_draw = true;
     while (tetris_.GameIsStart())
     {
@@ -195,15 +194,18 @@ void ControlCenter::TimerProcessThread()
 
 ControlCenter::ControlCenter(Coordinates size) : tetris_(size), battle_field_ptr(new BattleField(size))
 {
+    InitScreen(size);
 }
 
 void ControlCenter::StartProceses()
 {
 
-    std::cout << "Control key: Space - Exit" << std::endl;
-    std::cout << "4: Left; 6: Right; 9: Down" << std::endl;
-    std::cout << "7: RotateLeft; 9: RotateRight; 5: Drop" << std::endl;
-    std::cout << "+: Delay Up; -: Delay Down" << std::endl;
+    // console::clear_screen();
+    std::cout << "Control key: Space - Exit\n"
+                "4: Left; 6: Right; 9: Down\n"
+                "7: RotateLeft; 9: RotateRight; 5: Drop\n"
+                "+: Delay Up; -: Delay Down" << std::endl;
+    console::hide_cursor();
 
     tetris_.Start();
 
@@ -214,4 +216,5 @@ void ControlCenter::StartProceses()
     t1.join();
     t2.join();
     t3.join();
+    console::enable_cursor();
 }
