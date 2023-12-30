@@ -1,7 +1,6 @@
 #pragma once
 
 #include <vector>
-#include <iostream>
 #include <memory>
 #include <atomic>
 #include <thread>

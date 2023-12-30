@@ -38,6 +38,7 @@ class ControlCenter
     void InputProcessThread();
     void TetrisProcessThread();
     void TimerProcessThread();
+    void InitScreen(Coordinates size);
 
 public:
     ControlCenter(Coordinates size);

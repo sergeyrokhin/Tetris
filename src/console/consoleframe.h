@@ -7,19 +7,18 @@
 
 namespace console
 {
-
+inline int HEADER_SCREAN_H = 1;
+inline int HEADER_SCREAN_W = 20;
     int getch_my();
     int kbhit_my();
+    void clear_screen();
+    void hide_cursor();
+    void enable_cursor();
 
     class ConsoleFrame
     {
-        struct WinConsole
-        {
-            static std::mutex mutex_;
-        };
-
     private:
-        WinConsole console_;
+        static std::mutex mutex_console;
         Coordinates position_;
 
     private:
@@ -31,10 +30,9 @@ namespace console
         ConsoleFrame(const Coordinates &position = {});
         ConsoleFrame(const ConsoleFrame &);
         ConsoleFrame &operator=(const ConsoleFrame &);
-        ConsoleFrame();
+        ConsoleFrame() = delete;
         void Print(const BattleField &battle_field) const;
         void MoveCursorTo(Coordinates position) const;
-        void CursorShow();
-        void CursorHide();
+        void OutToConsole(std::string_view buf, Coordinates position) const;
     };
 }
